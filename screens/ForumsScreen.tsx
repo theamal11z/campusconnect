@@ -19,14 +19,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { toast } from 'sonner-native';
 
 const ForumsScreen = ({ navigation }) => {
-  const [forums, setForums] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { forums, loading: forumsLoading } = useRealtimeForums();
+  const [activeForumId, setActiveForumId] = useState(null);
+  const { messages, loading: messagesLoading } = useRealtimeMessages(activeForumId);
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
-  const [activeForumId, setActiveForumId] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
-  
-  const forumSubscription = useRef(null);
   
   useEffect(() => {
     fetchForums();
