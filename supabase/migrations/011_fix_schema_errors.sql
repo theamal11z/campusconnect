@@ -86,7 +86,7 @@ GROUP BY c.id, c.name;
 CREATE MATERIALIZED VIEW mv_user_activity AS
 SELECT 
     p.id as user_id,
-    p.full_name,
+    prof.full_name,
     COUNT(DISTINCT po.id) as post_count,
     COUNT(DISTINCT pc.id) as comment_count,
     COUNT(DISTINCT pi.id) FILTER (WHERE pi.interaction_type = 'like') as like_count,
