@@ -143,6 +143,24 @@ const CollegeDetailScreen = ({ route }) => {
             </TouchableOpacity>
           </View>
 
+          <View style={styles.actionButtons}>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => navigation.navigate('CompareColleges', { collegeId })}
+            >
+              <MaterialCommunityIcons name="compare" size={20} color="#1DA1F2" />
+              <Text style={styles.actionButtonText}>Compare</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => navigation.navigate('Forums', { collegeId })}
+            >
+              <MaterialCommunityIcons name="forum" size={20} color="#1DA1F2" />
+              <Text style={styles.actionButtonText}>Forums</Text>
+            </TouchableOpacity>
+          </View>
+
           <Text style={styles.sectionTitle}>Reviews</Text>
           {college.reviews?.map((review, index) => (
             <View key={index} style={styles.reviewCard}>
@@ -172,6 +190,26 @@ const StatItem = ({ icon, label, value }) => (
 );
 
 const styles = StyleSheet.create({
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 16,
+    paddingHorizontal: 16,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5FE',
+    padding: 12,
+    borderRadius: 8,
+    minWidth: 120,
+    justifyContent: 'center',
+  },
+  actionButtonText: {
+    marginLeft: 8,
+    color: '#1DA1F2',
+    fontWeight: '600',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
