@@ -8,7 +8,7 @@ import { ActivityIndicator } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-const CollegeDetailScreen = ({ route }) => {
+const CollegeDetailScreen = ({ route, navigation }) => {
   const { collegeId } = route.params;
   const [college, setCollege] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -151,7 +151,7 @@ const CollegeDetailScreen = ({ route }) => {
               <MaterialCommunityIcons name="compare" size={20} color="#1DA1F2" />
               <Text style={styles.actionButtonText}>Compare</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity 
               style={styles.actionButton}
               onPress={() => navigation.navigate('Forums', { collegeId })}
@@ -341,6 +341,32 @@ const styles = StyleSheet.create({
   addTagButton: {
     color: '#1DA1F2',
     fontSize: 16,
+  },
+  calloutContainer: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 12,
+    width: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  calloutTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#14171A',
+    marginBottom: 4,
+  },
+  calloutSubtitle: {
+    fontSize: 14,
+    color: '#657786',
+    marginBottom: 4,
+  },
+  calloutStats: {
+    fontSize: 12,
+    color: '#AAB8C2',
   },
 });
 
