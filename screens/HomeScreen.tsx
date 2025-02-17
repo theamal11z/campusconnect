@@ -190,7 +190,7 @@ const NewPostsFab = ({ onPress, visible }) => {
 
 const HomeScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const [posts, setPosts] = useState(MOCK_POSTS);
+  const { posts, loading, error, refetch: refreshPosts, likePost } = usePosts();
   const [hasNewPosts, setHasNewPosts] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
 

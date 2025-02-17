@@ -147,6 +147,11 @@ const ProfileScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('Posts');
   const scrollY = new Animated.Value(0);
   const { width } = useWindowDimensions();
+  const { user } = supabase.auth;
+  const { profile, loading: profileLoading } = useUserProfile(user?.id);
+  const { posts, loading: postsLoading, likePost } = usePosts();
+  
+  const userPosts = posts.filter(post => post.user_id === user?.id);
 
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
