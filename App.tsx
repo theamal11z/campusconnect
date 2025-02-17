@@ -92,10 +92,12 @@ function RootStack() {
 export default function App() {
   return (
     <SafeAreaProvider style={styles.container}>
-      <Toaster />
-      <NavigationContainer>
-        <RootStack />
-      </NavigationContainer>
+      <AuthProvider>
+        <Toaster />
+        <NavigationContainer>
+          <RootStack />
+        </NavigationContainer>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
