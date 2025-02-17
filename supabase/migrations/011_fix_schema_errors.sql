@@ -1,3 +1,4 @@
+
 -- First, drop existing objects in correct order to avoid conflicts
 DROP MATERIALIZED VIEW IF EXISTS mv_trending_posts;
 DROP MATERIALIZED VIEW IF EXISTS mv_user_activity;
@@ -86,7 +87,7 @@ GROUP BY c.id, c.name;
 CREATE MATERIALIZED VIEW mv_user_activity AS
 SELECT 
     p.id as user_id,
-    prof.full_name,
+    p.full_name,
     COUNT(DISTINCT po.id) as post_count,
     COUNT(DISTINCT pc.id) as comment_count,
     COUNT(DISTINCT pi.id) FILTER (WHERE pi.interaction_type = 'like') as like_count,
@@ -134,4 +135,4 @@ CREATE INDEX idx_mv_trending_posts_score ON mv_trending_posts(engagement_score D
 -- Enable RLS
 ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE post_interactions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE post_comments ENABLE ROW LEVEL SECURITY; 
+ALTER TABLE post_comments ENABLE ROW LEVEL SECURITY;
