@@ -139,6 +139,31 @@ const ChatScreen = ({ navigation }) => {
   const [sending, setSending] = useState(false);
   const flatListRef = useRef(null);
 
+  const handleImageUpload = async () => {
+    try {
+      const image = await MediaService.pickImage();
+      if (image) {
+        setSending(true);
+        const imageUrl = await MediaService.uploadMedia(image.uri, 'chat');
+        const newMessage = {
+          id: Date.now().toString(),
+          image: imageUrl,
+          timestamp: new Date().toLocaleTimeString([], { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          }),
+          sender: 'me',
+          read: false,
+        };
+        setMessages(prev => [...prev, newMessage]);
+      }
+    } catch (error) {
+      toast.error('Failed to upload image');
+    } finally {
+      setSending(false);
+    }
+  };
+
   const handleSend = async () => {
     if (!message.trim()) return;
 
@@ -241,6 +266,7 @@ const ChatScreen = ({ navigation }) => {
           <TouchableOpacity 
             style={styles.attachButton}
             accessibilityLabel="Add attachment"
+            onPress={handleImageUpload}
           >
             <MaterialCommunityIcons name="paperclip" size={24} color="#657786" />
           </TouchableOpacity>
