@@ -86,6 +86,8 @@ function RootStack() {
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="Verify" component={VerifyScreen} />
+      {/* Added Forums Screen here */}
+      <Stack.Screen name="Forums" component={ForumsScreen} />
       <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
     </Stack.Navigator>
