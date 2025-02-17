@@ -52,13 +52,24 @@ const PostScreen = ({ navigation }) => {
     setPosting(true);
     try {
       const user = supabase.auth.user();
-      const { data: post, error: postError } = await supabase
-        .from('posts')
-        .insert({
-          content: content.trim(),
-          author_id: user.id,
-        })
-        .single();
+      const newPost = {
+        id: Date.now().toString(),
+        content: content.trim(),
+        author_id: user.id,
+        created_at: new Date().toISOString(),
+      };
+
+      if (isOnline) {
+        const { data: post, error: postError } = await supabase
+          .from('posts')
+          .insert(newPost)
+          .single();
+
+        if (postError) throw postError;
+      } else {
+        await savePendingPost(newPost);
+        toast.success('Post saved offline and will sync when online');
+      }
 
       if (postError) throw postError;
 

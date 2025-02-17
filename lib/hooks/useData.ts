@@ -66,10 +66,21 @@ export function usePosts() {
   const [posts, setPosts] = useState<Database['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isOnline, savePendingPost, savePostsLocally, getLocalPosts } = useOfflineStorage();
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    if (isOnline) {
+      fetchPosts();
+    } else {
+      loadLocalPosts();
+    }
+  }, [isOnline]);
+
+  const loadLocalPosts = async () => {
+    const localPosts = await getLocalPosts();
+    setPosts(localPosts);
+    setLoading(false);
+  };
 
   async function fetchPosts() {
     try {
