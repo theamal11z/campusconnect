@@ -4,9 +4,9 @@ import { supabase } from '../supabase';
 export class TagService {
   static async getAllTags() {
     const { data, error } = await supabase
-      .from('college_tags')
+      .from('tags')
       .select('*')
-      .order('tag');
+      .order('name');
     
     if (error) throw error;
     return data;
@@ -15,28 +15,49 @@ export class TagService {
   static async getTagsByCollege(collegeId: string) {
     const { data, error } = await supabase
       .from('college_tags')
-      .select('*')
+      .select('*, tag:tags(*)')
       .eq('college_id', collegeId)
-      .order('tag');
+      .order('created_at');
     
     if (error) throw error;
     return data;
   }
 
-  static async addTag(collegeId: string, tag: string) {
+  static async getTagsByPost(postId: string) {
+    const { data, error } = await supabase
+      .from('post_tags')
+      .select('*, tag:tags(*)')
+      .eq('post_id', postId)
+      .order('created_at');
+    
+    if (error) throw error;
+    return data;
+  }
+
+  static async addTagToPost(postId: string, tagId: string) {
     const { error } = await supabase
-      .from('college_tags')
-      .insert({ college_id: collegeId, tag });
+      .from('post_tags')
+      .insert({ post_id: postId, tag_id: tagId });
     
     if (error) throw error;
   }
 
-  static async removeTag(tagId: string) {
+  static async removeTagFromPost(postId: string, tagId: string) {
     const { error } = await supabase
-      .from('college_tags')
+      .from('post_tags')
       .delete()
-      .eq('id', tagId);
+      .match({ post_id: postId, tag_id: tagId });
     
     if (error) throw error;
+  }
+
+  static async createTag(name: string, category: string) {
+    const { data, error } = await supabase
+      .from('tags')
+      .insert({ name, category })
+      .single();
+    
+    if (error) throw error;
+    return data;
   }
 }

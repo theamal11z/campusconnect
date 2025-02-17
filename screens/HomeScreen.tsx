@@ -239,9 +239,7 @@ const HomeScreen = ({ navigation }) => {
 
       <NewPostsFab
         visible={!refreshing}
-        onPress={() => {
-          // Handle new post creation
-        }}
+        onPress={() => navigation.navigate('PostScreen')}
       />
     </SafeAreaView>
   );
