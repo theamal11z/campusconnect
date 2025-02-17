@@ -31,12 +31,18 @@ export class MediaService {
 
   static async uploadMedia(uri: string, folder: string) {
     try {
+      const MAX_FILE_SIZE = 1024 * 1024; // 1MB in bytes
+      
       const fileName = uri.split('/').pop();
       const fileExt = fileName?.split('.').pop();
       const filePath = `${folder}/${Date.now()}.${fileExt}`;
 
       const response = await fetch(uri);
       const blob = await response.blob();
+      
+      if (blob.size > MAX_FILE_SIZE) {
+        throw new Error('File size exceeds 1MB limit');
+      }
 
       const { data, error } = await supabase.storage
         .from('media')

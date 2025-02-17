@@ -223,12 +223,47 @@ export function useRealtimeForums() {
   useEffect(() => {
     fetchForums();
 
-    // Set up real-time subscription
+    const batchUpdates = [];
+    let batchTimeout;
+
+    // Set up real-time subscription with batching
     const subscription = supabase
       .channel('forums')
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'forums' },
         (payload) => {
+          batchUpdates.push(payload);
+          
+          // Clear existing timeout
+          if (batchTimeout) clearTimeout(batchTimeout);
+          
+          // Process batch after 100ms of inactivity
+          batchTimeout = setTimeout(() => {
+            const changes = {};
+            batchUpdates.forEach(update => {
+              changes[update.new?.id || update.old?.id] = update;
+            });
+            
+            // Apply batched updates
+            setForums(current => {
+              const updated = [...current];
+              Object.values(changes).forEach(change => {
+                switch (change.eventType) {
+                  case 'INSERT':
+                    updated.push(change.new);
+                    break;
+                  case 'UPDATE':
+                    const idx = updated.findIndex(f => f.id === change.new.id);
+                    if (idx !== -1) updated[idx] = change.new;
+                    break;
+                  case 'DELETE':
+                    return updated.filter(f => f.id !== change.old.id);
+                }
+              });
+              return updated;
+            });
+            batchUpdates.length = 0;
+          }, 100);
           switch (payload.eventType) {
             case 'INSERT':
               setForums(current => [...current, payload.new]);
