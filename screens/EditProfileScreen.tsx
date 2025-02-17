@@ -57,20 +57,7 @@ const EditProfileScreen = ({ navigation }) => {
       const user = supabase.auth.user();
       if (!user) throw new Error('No user on the session!');
 
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      const filename = `avatar-${user.id}-${Date.now()}.jpg`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filename, blob);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filename);
-
+      const publicUrl = await ProfileService.uploadAvatar(uri, user.id);
       setAvatarUrl(publicUrl);
     } catch (error) {
       Alert.alert('Error', 'Error uploading avatar!');
@@ -83,20 +70,13 @@ const EditProfileScreen = ({ navigation }) => {
       const user = supabase.auth.user();
       if (!user) throw new Error('No user on the session!');
 
-      const updates = {
-        id: user.id,
+      await ProfileService.updateProfile(user.id, {
         full_name: fullName,
         username,
         bio,
         avatar_url: avatarUrl,
-        updated_at: new Date(),
-      };
+      });
 
-      const { error } = await supabase
-        .from('profiles')
-        .upsert(updates);
-
-      if (error) throw error;
       Alert.alert('Success', 'Profile updated successfully!');
       navigation.goBack();
     } catch (error) {
