@@ -10,3 +10,18 @@ run = ["sh", "-c", "npm run start"]
 [[ports]]
 localPort = 8081
 externalPort = 80
+
+[[ports]]
+localPort = 8082
+externalPort = 3000
+
+[workflows]
+runButton = "Start Expo"
+
+[[workflows.workflow]]
+name = "Start Expo"
+author = 39750802
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx expo start --web"
