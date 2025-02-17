@@ -159,16 +159,20 @@ function RootStack() {
   );
 }
 
+import { ErrorBoundary } from './lib/components/ErrorBoundary';
+
 export default function App() {
   return (
-    <SafeAreaProvider style={styles.container}>
-      <AuthProvider>
-        <Toaster />
-        <NavigationContainer>
-          <RootStack />
-        </NavigationContainer>
-      </AuthProvider>
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider style={styles.container}>
+        <AuthProvider>
+          <Toaster />
+          <NavigationContainer>
+            <RootStack />
+          </NavigationContainer>
+        </AuthProvider>
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }
 
