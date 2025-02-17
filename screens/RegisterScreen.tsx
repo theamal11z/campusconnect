@@ -50,15 +50,38 @@ const RegisterScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName
+          }
+        }
+      });
+
+      if (signUpError) throw signUpError;
+
+      // Create profile entry
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([
+          {
+            full_name: fullName,
+            username: email.split('@')[0],
+            email: email,
+          }
+        ]);
+
+      if (profileError) throw profileError;
+
       navigation.reset({
         index: 0,
         routes: [{ name: 'Main' }]
       });
+      toast.success('Registration successful!');
     } catch (error) {
-      toast.error('Registration failed. Please try again.');
+      toast.error(error.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
