@@ -13,6 +13,7 @@ import RegisterScreen from "./screens/RegisterScreen"
 import ExploreScreen from "./screens/ExploreScreen"
 import ChatScreen from "./screens/ChatScreen"
 import NotificationsScreen from "./screens/NotificationsScreen"
+import VerifyScreen from "./screens/VerifyScreen"
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
