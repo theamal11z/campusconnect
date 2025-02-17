@@ -13,16 +13,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const MOCK_COLLEGES = [
-  {
-    id: '1',
-    name: 'Harvard University',
-    location: 'Cambridge, MA',
-    type: 'Private',
-    ranking: 1,
-    description: 'World-renowned university known for academic excellence and innovation.',
-    image: 'https://api.a0.dev/assets/image?text=Harvard%20University%20Campus&aspect=16:9&seed=1',
-  },
+import { useColleges } from '../lib/hooks/useData';
+
+const ExploreScreen = () => {
+  const { colleges, loading, error } = useColleges();
   {
     id: '2',
     name: 'Stanford University',
@@ -117,13 +111,26 @@ const ExploreScreen = () => {
         ))}
       </ScrollView>
 
-      <FlatList
-        data={filteredColleges}
-        renderItem={({ item }) => <CollegeCard college={item} />}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.collegesList}
-        showsVerticalScrollIndicator={false}
-      />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#1DA1F2" />
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={colleges}
+          renderItem={({ item }) => <CollegeCard college={item} />}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.collegesList}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={refetch} />
+          }
+        />
+      )}
     </SafeAreaView>
   );
 };
