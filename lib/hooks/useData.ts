@@ -15,8 +15,12 @@ export function useColleges() {
     try {
       const { data, error } = await supabase
         .from('colleges')
-        .select('*')
-        .order('name', { ascending: true });
+        .select(`
+          *,
+          tags:college_tags(tag)
+        `)
+        .order('ranking', { ascending: true })
+        .limit(50);
 
       if (error) throw error;
       setColleges(data || []);

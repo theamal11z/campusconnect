@@ -92,9 +92,26 @@ const ExploreScreen = () => {
     );
   };
 
-  const filteredColleges = MOCK_COLLEGES.filter(college => 
-    college.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredColleges = useMemo(() => {
+    if (!colleges) return [];
+    
+    return colleges.filter(college => {
+      const matchesSearch = !searchQuery || 
+        college.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        college.location.toLowerCase().includes(searchQuery.toLowerCase());
+        
+      const matchesFilter = activeFilter === 'all' || 
+        (activeFilter === 'private' && college.type === 'Private') ||
+        (activeFilter === 'public' && college.type === 'Public') ||
+        (activeFilter === 'top10' && college.ranking <= 10) ||
+        (activeFilter === 'top50' && college.ranking <= 50);
+        
+      const matchesTags = selectedTags.length === 0 || 
+        selectedTags.every(tag => college.tags?.includes(tag));
+        
+      return matchesSearch && matchesFilter && matchesTags;
+    });
+  }, [colleges, searchQuery, activeFilter, selectedTags]);
 
   return (
     <SafeAreaView style={styles.container} edges={['right', 'left']}>
