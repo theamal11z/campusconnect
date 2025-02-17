@@ -73,7 +73,7 @@ SELECT
     (
         SELECT COUNT(*)
         FROM user_analytics ua
-        WHERE (ua.activity_data->>'college_id')::UUID = c.id
+        WHERE (ua.event_data->>'college_id')::UUID = c.id
         AND ua.created_at > NOW() - INTERVAL '30 days'
     ) as monthly_interactions
 FROM colleges c
