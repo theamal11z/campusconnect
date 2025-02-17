@@ -142,6 +142,42 @@ export function useNotifications() {
   return { notifications, loading, error, refetch: fetchNotifications };
 }
 
+export function useVerificationUpload() {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const uploadVerificationDocument = async (file: any) => {
+    setUploading(true);
+    try {
+      const fileExt = file.uri.split('.').pop();
+      const userId = supabase.auth.user()?.id;
+      const fileName = `${userId}-verification.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('Verification Document')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ verification_status: 'pending', verification_document: fileName })
+        .eq('id', userId);
+
+      if (updateError) throw updateError;
+
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return { uploadVerificationDocument, uploading, error };
+}
+
 export function useUserProfile(userId: string) {
   const [profile, setProfile] = useState<Database['public']['Tables']['profiles']['Row'] | null>(null);
   const [loading, setLoading] = useState(true);

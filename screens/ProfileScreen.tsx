@@ -194,9 +194,25 @@ const ProfileScreen = ({ navigation }) => {
           </TouchableOpacity>
 
           <View style={styles.userInfo}>
-            <Text style={styles.userName}>{MOCK_USER.name}</Text>
-            <Text style={styles.userHandle}>{MOCK_USER.handle}</Text>
-            <Text style={styles.userBio}>{MOCK_USER.bio}</Text>
+            <Text style={styles.userName}>{profile?.full_name}</Text>
+            <Text style={styles.userHandle}>@{profile?.username}</Text>
+            <Text style={styles.userBio}>{profile?.bio}</Text>
+            {profile?.verification_status && (
+              <View style={[
+                styles.verificationStatus,
+                profile.verification_status === 'pending' && styles.pendingStatus,
+                profile.verification_status === 'verified' && styles.verifiedStatus
+              ]}>
+                <MaterialCommunityIcons 
+                  name={profile.verification_status === 'pending' ? 'clock-outline' : 'check-circle'} 
+                  size={16} 
+                  color="#fff" 
+                />
+                <Text style={styles.verificationText}>
+                  {profile.verification_status.charAt(0).toUpperCase() + profile.verification_status.slice(1)}
+                </Text>
+              </View>
+            )}
           </View>
 
           <ProfileStats stats={MOCK_USER.stats} />
@@ -398,6 +414,26 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 16,
     color: '#657786',
+  },
+  verificationStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  pendingStatus: {
+    backgroundColor: '#F5A623',
+  },
+  verifiedStatus: {
+    backgroundColor: '#17BF63',
+  },
+  verificationText: {
+    color: '#fff',
+    marginLeft: 4,
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 

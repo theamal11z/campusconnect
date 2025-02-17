@@ -50,14 +50,27 @@ const VerifyScreen = ({ navigation }) => {
     }
   };
 
-  const handleSubmit = async () => {
+  const { uploadVerificationDocument, uploading } = useVerificationUpload();
+
+const handleSubmit = async () => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setCurrentStep(3);
-      toast.success('Verification submitted successfully!');
-      // Navigate back after delay
-      setTimeout(() => navigation.goBack(), 2000);
+      if (!image) {
+        toast.error('Please take a photo first');
+        return;
+      }
+
+      const result = await uploadVerificationDocument({
+        uri: image,
+        type: 'image/jpeg',
+      });
+
+      if (result) {
+        setCurrentStep(3);
+        toast.success('Verification submitted successfully!');
+        setTimeout(() => navigation.goBack(), 2000);
+      } else {
+        throw new Error('Upload failed');
+      }
     } catch (error) {
       toast.error('Verification submission failed. Please try again.');
     }
