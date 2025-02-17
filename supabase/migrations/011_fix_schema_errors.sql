@@ -86,8 +86,8 @@ GROUP BY c.id, c.name;
 -- Recreate user activity view
 CREATE MATERIALIZED VIEW mv_user_activity AS
 SELECT 
-    p.id as user_id,
-    p.full_name,
+    prof.id as user_id,
+    prof.full_name,
     COUNT(DISTINCT po.id) as post_count,
     COUNT(DISTINCT pc.id) as comment_count,
     COUNT(DISTINCT pi.id) FILTER (WHERE pi.interaction_type = 'like') as like_count,
@@ -95,14 +95,14 @@ SELECT
     COUNT(DISTINCT ur_followers.id) as follower_count,
     MAX(po.created_at) as last_post_date,
     MAX(m.created_at) as last_message_date
-FROM profiles p
-LEFT JOIN posts po ON p.id = po.author_id
-LEFT JOIN post_comments pc ON p.id = pc.author_id
-LEFT JOIN post_interactions pi ON p.id = pi.user_id
-LEFT JOIN user_relationships ur_following ON p.id = ur_following.follower_id
-LEFT JOIN user_relationships ur_followers ON p.id = ur_followers.following_id
-LEFT JOIN messages m ON p.id = m.sender_id
-GROUP BY p.id, p.full_name;
+FROM profiles prof
+LEFT JOIN posts po ON prof.id = po.author_id
+LEFT JOIN post_comments pc ON prof.id = pc.author_id
+LEFT JOIN post_interactions pi ON prof.id = pi.user_id
+LEFT JOIN user_relationships ur_following ON prof.id = ur_following.follower_id
+LEFT JOIN user_relationships ur_followers ON prof.id = ur_followers.following_id
+LEFT JOIN messages m ON prof.id = m.sender_id
+GROUP BY prof.id, prof.full_name;
 
 -- Recreate trending posts view
 CREATE MATERIALIZED VIEW mv_trending_posts AS
