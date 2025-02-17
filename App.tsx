@@ -14,9 +14,66 @@ import ExploreScreen from "./screens/ExploreScreen"
 import ChatScreen from "./screens/ChatScreen"
 import NotificationsScreen from "./screens/NotificationsScreen"
 import VerifyScreen from "./screens/VerifyScreen"
+import React, { useState, createContext, useContext, useEffect } from 'react';
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+// AuthContext
+const AuthContext = createContext();
+
+const AuthProvider = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+
+  const login = (userData) => {
+    // Simulate login - replace with actual authentication logic
+    setUser(userData);
+    setIsAuthenticated(true);
+    // Store token in AsyncStorage or similar
+  };
+
+  const logout = () => {
+    setUser(null);
+    setIsAuthenticated(false);
+    // Clear token from AsyncStorage or similar
+  };
+
+  useEffect(() => {
+    // Check for existing token on app start
+    const checkToken = async () => {
+       //Replace with actual token retrieval
+      const token = await AsyncStorage.getItem('token');
+      if(token){
+        setIsAuthenticated(true);
+      }
+    };
+    checkToken();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+
+const useAuth = () => {
+  return useContext(AuthContext);
+};
+
+//ProtectedRoute Component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Stack.Screen name="Login" component={LoginScreen} />;
+  }
+
+  return children;
+};
 
 function MainTabs() {
   return (
@@ -82,14 +139,22 @@ function RootStack() {
     >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Main" component={MainTabs} />
+      <Stack.Screen
+          name="Main"
+          component={({ navigation }) => (
+            <ProtectedRoute>
+              <MainTabs navigation={navigation} />
+            </ProtectedRoute>
+          )}
+        />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="Verify" component={VerifyScreen} />
       {/* Added Forums Screen here */}
-      <Stack.Screen name="Forums" component={ForumsScreen} />
-      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
-      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      {/* Assuming these screens exist */}
+      {/* <Stack.Screen name="Forums" component={ForumsScreen} /> */}
+      {/* <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} /> */}
+      {/* <Stack.Screen name="EditProfile" component={EditProfileScreen} /> */}
     </Stack.Navigator>
   );
 }
