@@ -59,18 +59,19 @@ const handleSubmit = async () => {
         return;
       }
 
-      const result = await uploadVerificationDocument({
-        uri: image,
-        type: 'image/jpeg',
-      });
+      const response = await fetch(image);
+      const blob = await response.blob();
+      const userId = supabase.auth.user()?.id;
 
-      if (result) {
-        setCurrentStep(3);
-        toast.success('Verification submitted successfully!');
-        setTimeout(() => navigation.goBack(), 2000);
-      } else {
-        throw new Error('Upload failed');
+      if (!userId) {
+        toast.error('User not authenticated');
+        return;
       }
+
+      await VerificationService.uploadVerificationDocument(blob, userId);
+      setCurrentStep(3);
+      toast.success('Verification submitted successfully!');
+      setTimeout(() => navigation.goBack(), 2000);
     } catch (error) {
       toast.error('Verification submission failed. Please try again.');
     }
