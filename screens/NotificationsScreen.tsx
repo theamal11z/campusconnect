@@ -1,52 +1,20 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   FlatList,
   StyleSheet,
-  Animated,
+  ActivityIndicator,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNotifications } from '../lib/hooks/useData';
+import { supabase } from '../lib/supabase';
 import { toast } from 'sonner-native';
-
-// Mock notifications data
-const MOCK_NOTIFICATIONS = [
-  {
-    id: '1',
-    type: 'like',
-    title: 'John Doe liked your post',
-    description: '"Just launched my new React Native app! 🚀"',
-    timestamp: '2m ago',
-    read: false,
-  },
-  {
-    id: '2',
-    type: 'follow',
-    title: 'Sarah Smith started following you',
-    timestamp: '15m ago',
-    read: false,
-  },
-  {
-    id: '3',
-    type: 'mention',
-    title: 'Tech Insider mentioned you',
-    description: 'In a post about React Native development',
-    timestamp: '1h ago',
-    read: true,
-  },
-  {
-    id: '4',
-    type: 'comment',
-    title: 'New comment on your post',
-    description: 'Great work! Looking forward to seeing more.',
-    timestamp: '2h ago',
-    read: true,
-  },
-];
 
 const NotificationIcon = ({ type, read }) => {
   const getIconDetails = () => {
@@ -94,7 +62,9 @@ const NotificationItem = ({ notification, onPress }) => (
           {notification.description}
         </Text>
       )}
-      <Text style={styles.timestamp}>{notification.timestamp}</Text>
+      <Text style={styles.timestamp}>
+        {new Date(notification.created_at).toRelativeTime()}
+      </Text>
     </View>
   </TouchableOpacity>
 );
@@ -135,38 +105,61 @@ const Header = ({ onBack, onMarkAllRead, hasUnread }) => {
 };
 
 const NotificationsScreen = ({ navigation }) => {
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
-  
+  const { notifications, loading, error, refetch } = useNotifications();
   const hasUnread = notifications.some(notification => !notification.read);
 
-  const handleMarkAllRead = () => {
-    setNotifications(notifications.map(notification => ({
-      ...notification,
-      read: true
-    })));
-    toast.success('All notifications marked as read');
+  const handleMarkAllRead = async () => {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('user_id', supabase.auth.user()?.id);
+
+      if (error) throw error;
+      await refetch();
+      toast.success('All notifications marked as read');
+    } catch (err) {
+      toast.error('Failed to mark notifications as read');
+    }
   };
 
-  const handleNotificationPress = (notification) => {
+  const handleNotificationPress = async (notification) => {
     if (!notification.read) {
-      setNotifications(notifications.map(n => 
-        n.id === notification.id ? { ...n, read: true } : n
-      ));
+      try {
+        const { error } = await supabase
+          .from('notifications')
+          .update({ read: true })
+          .eq('id', notification.id);
+
+        if (error) throw error;
+        await refetch();
+      } catch (err) {
+        console.error('Error marking notification as read:', err);
+      }
     }
-    // Handle navigation or action based on notification type
+
+    // Handle navigation based on notification type
     switch (notification.type) {
       case 'like':
       case 'comment':
-        // Navigate to post
+        navigation.navigate('Post', { id: notification.post_id });
         break;
       case 'follow':
-        // Navigate to profile
+        navigation.navigate('Profile', { userId: notification.actor_id });
         break;
       case 'mention':
-        // Navigate to mention
+        navigation.navigate('Post', { id: notification.post_id });
         break;
     }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#1DA1F2" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['right', 'left']}>
@@ -196,6 +189,12 @@ const NotificationsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#fff',
   },
   header: {

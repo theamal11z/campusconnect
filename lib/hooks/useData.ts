@@ -107,6 +107,41 @@ export function usePosts() {
   return { posts, loading, error, refetch: fetchPosts, likePost };
 }
 
+export function useNotifications() {
+  const [notifications, setNotifications] = useState<Database['public']['Tables']['notifications']['Row'][]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  async function fetchNotifications() {
+    try {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select(`
+          *,
+          profiles:user_id (
+            full_name,
+            username,
+            avatar_url
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setNotifications(data || []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return { notifications, loading, error, refetch: fetchNotifications };
+}
+
 export function useUserProfile(userId: string) {
   const [profile, setProfile] = useState<Database['public']['Tables']['profiles']['Row'] | null>(null);
   const [loading, setLoading] = useState(true);
