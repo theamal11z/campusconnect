@@ -28,6 +28,20 @@ const SETTINGS_CATEGORIES = [
         description: 'Verify your identity to unlock all features',
         action: (navigation) => navigation.navigate('Verify'),
       },
+      {
+        id: 'password',
+        title: 'Change Password',
+        type: 'button',
+        description: 'Update your account password',
+        action: (navigation) => navigation.navigate('ChangePassword'),
+      },
+      {
+        id: 'editProfile',
+        title: 'Edit Profile',
+        type: 'button',
+        description: 'Update your profile information',
+        action: (navigation) => navigation.navigate('EditProfile'),
+      },
     ],
   },
   {
