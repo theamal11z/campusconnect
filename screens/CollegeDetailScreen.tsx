@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Dimensions, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapView, { Marker } from 'react-native-maps';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,14 +8,17 @@ import { ActivityIndicator } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-const CollegeDetailScreen = ({ route, navigation }) => {
+const CollegeDetailScreen = ({ route }) => {
   const { collegeId } = route.params;
   const [college, setCollege] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [tags, setTags] = useState([]);
+  const [newTag, setNewTag] = useState('');
 
   useEffect(() => {
     fetchCollegeDetails();
+    loadTags();
   }, [collegeId]);
 
   const fetchCollegeDetails = async () => {
@@ -46,6 +48,26 @@ const CollegeDetailScreen = ({ route, navigation }) => {
     }
   };
 
+  const loadTags = async () => {
+    try {
+      const tags = await TagService.getTagsByCollege(collegeId);
+      setTags(tags);
+    } catch (error) {
+      console.error('Error loading tags:', error);
+    }
+  };
+
+  const handleAddTag = async () => {
+    if (!newTag.trim()) return;
+    try {
+      await TagService.addTag(collegeId, newTag.trim());
+      setNewTag('');
+      loadTags();
+    } catch (error) {
+      console.error('Error adding tag:', error);
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -69,7 +91,7 @@ const CollegeDetailScreen = ({ route, navigation }) => {
           source={{ uri: college.image_url }} 
           style={styles.coverImage}
         />
-        
+
         <View style={styles.contentContainer}>
           <Text style={styles.collegeName}>{college.name}</Text>
           <Text style={styles.location}>
@@ -104,6 +126,22 @@ const CollegeDetailScreen = ({ route, navigation }) => {
               title={college.name}
             />
           </MapView>
+
+          <Text style={styles.sectionTitle}>Tags</Text>
+          {tags.map((tag, index) => (
+            <Text key={index} style={styles.tag}>{tag}</Text>
+          ))}
+          <View style={styles.addTagContainer}>
+            <TextInput
+              style={styles.tagInput}
+              value={newTag}
+              onChangeText={setNewTag}
+              placeholder="Add a tag"
+            />
+            <TouchableOpacity onPress={handleAddTag}>
+              <Text style={styles.addTagButton}>Add</Text>
+            </TouchableOpacity>
+          </View>
 
           <Text style={styles.sectionTitle}>Reviews</Text>
           {college.reviews?.map((review, index) => (
@@ -238,6 +276,33 @@ const styles = StyleSheet.create({
   reviewText: {
     color: '#657786',
     fontSize: 14,
+  },
+  tag: {
+    fontSize: 14,
+    color: '#657786',
+    marginRight: 8,
+    marginBottom: 4,
+    padding: 6,
+    borderRadius: 12,
+    backgroundColor: '#F8F9FA',
+  },
+  addTagContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  tagInput: {
+    flex: 1,
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginRight: 8,
+  },
+  addTagButton: {
+    color: '#1DA1F2',
+    fontSize: 16,
   },
 });
 

@@ -68,6 +68,29 @@ const CollegeCard = ({ college }) => (
 const ExploreScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
+  const [tags, setTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    loadTags();
+  }, []);
+
+  const loadTags = async () => {
+    try {
+      const tags = await TagService.getAllTags();
+      setTags(tags);
+    } catch (error) {
+      console.error('Error loading tags:', error);
+    }
+  };
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(current =>
+      current.includes(tag)
+        ? current.filter(t => t !== tag)
+        : [...current, tag]
+    );
+  };
 
   const filteredColleges = MOCK_COLLEGES.filter(college => 
     college.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -108,6 +131,21 @@ const ExploreScreen = () => {
               {filter.label}
             </Text>
           </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.tagsContainer}
+      >
+        {tags.map(tag => (
+          <Tag
+            key={tag.id}
+            label={tag.tag}
+            active={selectedTags.includes(tag.tag)}
+            onPress={() => toggleTag(tag.tag)}
+          />
         ))}
       </ScrollView>
 
