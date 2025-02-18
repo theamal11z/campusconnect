@@ -241,7 +241,7 @@ const HomeScreen = ({ navigation }) => {
         visible={!refreshing}
         onPress={() => navigation.navigate('PostScreen')}
       />
-    </SafeAreaView>
+    </SafeAreaView>w>
   );
 };
 

@@ -17,25 +17,6 @@ import { useColleges } from '../lib/hooks/useData';
 
 const ExploreScreen = () => {
   const { colleges, loading, error } = useColleges();
-  {
-    id: '2',
-    name: 'Stanford University',
-    location: 'Stanford, CA',
-    type: 'Private',
-    ranking: 2,
-    description: 'Leading research institution in the heart of Silicon Valley.',
-    image: 'https://api.a0.dev/assets/image?text=Stanford%20University%20Campus&aspect=16:9&seed=2',
-  },
-  {
-    id: '3',
-    name: 'MIT',
-    location: 'Cambridge, MA',
-    type: 'Private',
-    ranking: 3,
-    description: 'Premier institution for science, technology, and engineering.',
-    image: 'https://api.a0.dev/assets/image?text=MIT%20Campus&aspect=16:9&seed=3',
-  },
-];
 
 const FILTERS = [
   { id: 'all', label: 'All' },

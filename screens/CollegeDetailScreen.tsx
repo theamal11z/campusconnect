@@ -57,6 +57,22 @@ const CollegeDetailScreen = ({ route, navigation }) => {
     }
   };
 
+  if (loading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="#1DA1F2" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
   const handleAddTag = async () => {
     if (!newTag.trim()) return;
     try {
@@ -68,20 +84,12 @@ const CollegeDetailScreen = ({ route, navigation }) => {
     }
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#1DA1F2" />
-      </View>
-    );
-  }
-
-  if (error || !college) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error loading college details</Text>
-      </View>
-    );
+  if (!college) {
+      return (
+          <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>Error loading college details</Text>
+          </View>
+      );
   }
 
   return (
@@ -93,22 +101,22 @@ const CollegeDetailScreen = ({ route, navigation }) => {
         />
 
         <View style={styles.contentContainer}>
-          <Text style={styles.collegeName}>{college.name}</Text>
+          <Text style={styles.collegeName}>{college.name}</Text>;
           <Text style={styles.location}>
             <MaterialCommunityIcons name="map-marker" size={16} color="#657786" />
             {' '}{college.location}
-          </Text>
+          </Text>;
 
           <View style={styles.statsContainer}>
             <StatItem icon="school" label="Type" value={college.type} />
             <StatItem icon="trophy" label="Ranking" value={`#${college.ranking}`} />
             <StatItem icon="account-group" label="Students" value={college.student_count} />
-          </View>
+          </View>;
 
-          <Text style={styles.sectionTitle}>About</Text>
-          <Text style={styles.description}>{college.description}</Text>
+          <Text style={styles.sectionTitle}>About</Text>;
+          <Text style={styles.description}>{college.description}</Text>;
 
-          <Text style={styles.sectionTitle}>Location</Text>
+          <Text style={styles.sectionTitle}>Location</Text>;
           <MapView
             style={styles.map}
             initialRegion={{
@@ -125,12 +133,12 @@ const CollegeDetailScreen = ({ route, navigation }) => {
               }}
               title={college.name}
             />
-          </MapView>
+          </MapView>;
 
-          <Text style={styles.sectionTitle}>Tags</Text>
+          <Text style={styles.sectionTitle}>Tags</Text>;
           {tags.map((tag, index) => (
             <Text key={index} style={styles.tag}>{tag}</Text>
-          ))}
+          ))};
           <View style={styles.addTagContainer}>
             <TextInput
               style={styles.tagInput}
@@ -141,7 +149,7 @@ const CollegeDetailScreen = ({ route, navigation }) => {
             <TouchableOpacity onPress={handleAddTag}>
               <Text style={styles.addTagButton}>Add</Text>
             </TouchableOpacity>
-          </View>
+          </View>;
 
           <View style={styles.actionButtons}>
             <TouchableOpacity 
@@ -150,7 +158,7 @@ const CollegeDetailScreen = ({ route, navigation }) => {
             >
               <MaterialCommunityIcons name="compare" size={20} color="#1DA1F2" />
               <Text style={styles.actionButtonText}>Compare</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>;
 
             <TouchableOpacity 
               style={styles.actionButton}
@@ -158,10 +166,10 @@ const CollegeDetailScreen = ({ route, navigation }) => {
             >
               <MaterialCommunityIcons name="forum" size={20} color="#1DA1F2" />
               <Text style={styles.actionButtonText}>Forums</Text>
-            </TouchableOpacity>
-          </View>
+            </TouchableOpacity>;
+          </View>;
 
-          <Text style={styles.sectionTitle}>Reviews</Text>
+          <Text style={styles.sectionTitle}>Reviews</Text>;
           {college.reviews?.map((review, index) => (
             <View key={index} style={styles.reviewCard}>
               <Image 
@@ -169,27 +177,32 @@ const CollegeDetailScreen = ({ route, navigation }) => {
                 style={styles.reviewerAvatar}
               />
               <View style={styles.reviewContent}>
-                <Text style={styles.reviewerName}>{review.user.full_name}</Text>
-                <Text style={styles.rating}>{'★'.repeat(review.rating)}</Text>
-                <Text style={styles.reviewText}>{review.comment}</Text>
-              </View>
+                <Text style={styles.reviewerName}>{review.user.full_name}</Text>;
+                <Text style={styles.rating}>{'★'.repeat(review.rating)}</Text>;
+                <Text style={styles.reviewText}>{review.comment}</Text>;
+              </View>;
             </View>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          ))};
+        </View>;
+      </ScrollView>;
+    </SafeAreaView>;
   );
 };
 
 const StatItem = ({ icon, label, value }) => (
   <View style={styles.statItem}>
     <MaterialCommunityIcons name={icon} size={24} color="#1DA1F2" />
-    <Text style={styles.statLabel}>{label}</Text>
-    <Text style={styles.statValue}>{value}</Text>
+    <Text style={styles.statLabel}>{label}</Text>;
+    <Text style={styles.statValue}>{value}</Text>;
   </View>
 );
 
 const styles = StyleSheet.create({
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
