@@ -53,11 +53,14 @@ const RegisterScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
+      if (!email || !password || !fullName) {
+        throw new Error('Please fill in all fields');
+      }
       await signUp(email, password, fullName);
       toast.success('Registration successful!');
-    } catch (error) {
-      toast.error(error.message || 'Registration failed. Please try again.');
-    } finally {
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      toast.error(error?.message || 'Registration failed. Please try again.');
       setLoading(false);
     }
   };

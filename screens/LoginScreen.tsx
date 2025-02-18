@@ -31,11 +31,14 @@ const LoginScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
+      if (!email || !password) {
+        throw new Error('Please fill in all fields');
+      }
       await signIn(email, password);
       toast.success('Login successful!');
-    } catch (error) {
-      toast.error(error.message || 'Login failed. Please try again.');
-    } finally {
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast.error(error?.message || 'Login failed. Please try again.');
       setLoading(false);
     }
   };

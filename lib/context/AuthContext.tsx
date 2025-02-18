@@ -50,10 +50,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      if (!data.user) throw new Error('No user data returned');
+      setUser(data.user);
+      setSession(data.session);
       navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
     } catch (error) {
+      console.error('SignIn error:', error);
       throw error;
     }
   };
