@@ -157,18 +157,22 @@ function RootStack() {
 
 import { ErrorBoundary } from './lib/components/ErrorBoundary';
 
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 export default function App() {
   return (
-    <ErrorBoundary>
-      <SafeAreaProvider style={styles.container}>
-        <AuthProvider>
-          <Toaster />
-          <NavigationContainer>
-            <RootStack />
-          </NavigationContainer>
-        </AuthProvider>
-      </SafeAreaProvider>
-    </ErrorBoundary>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ErrorBoundary>
+        <SafeAreaProvider style={styles.container}>
+          <AuthProvider>
+            <Toaster />
+            <NavigationContainer>
+              <RootStack />
+            </NavigationContainer>
+          </AuthProvider>
+        </SafeAreaProvider>
+      </ErrorBoundary>
+    </GestureHandlerRootView>
   );
 }
 
