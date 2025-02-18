@@ -1,4 +1,3 @@
-
 import { createContext, useState, useContext, useEffect } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../supabase';
@@ -65,36 +64,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
       const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
+        email: email.trim(),
         password,
         options: { 
-          data: { full_name: fullName },
+          data: { 
+            full_name: fullName.trim()
+          },
         }
       });
-      
-      if (signUpError) throw signUpError;
-      if (!data.user) throw new Error('No user data returned');
+
+      if (signUpError) {
+        console.error('SignUp error:', signUpError);
+        throw signUpError;
+      }
+
+      if (!data.user) {
+        throw new Error('Signup failed - no user data');
+      }
 
       const { error: profileError } = await supabase
         .from('profiles')
         .insert([{
           id: data.user.id,
-          full_name: fullName,
+          full_name: fullName.trim(),
           username: email.split('@')[0],
-          email
+          email: email.trim()
         }]);
-        
-      if (profileError) throw profileError;
 
-      // Set user and session after successful signup
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        throw profileError;
+      }
+
+      // Set user and session
       setUser(data.user);
       setSession(data.session);
-      
-      navigation.reset({ 
-        index: 0, 
-        routes: [{ name: 'Main' }] 
-      });
-    } catch (error) {
+
+      // Add a small delay to ensure state is updated
+      setTimeout(() => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }]
+        });
+      }, 100);
+
+    } catch (error: any) {
       console.error('SignUp error:', error);
       throw error;
     }
