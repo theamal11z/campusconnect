@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../lib/context/AuthContext';
 import {
   View,
   Text,
@@ -27,6 +28,8 @@ const RegisterScreen = ({ navigation }) => {
     return /\S+@\S+\.\S+/.test(email);
   };
 
+  const { signUp } = useAuth();
+  
   const handleRegister = async () => {
     if (!fullName || !email || !password || !confirmPassword) {
       toast.error('Please fill in all fields');
@@ -50,35 +53,7 @@ const RegisterScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName
-          }
-        }
-      });
-
-      if (signUpError) throw signUpError;
-
-      // Create profile entry
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert([
-          {
-            full_name: fullName,
-            username: email.split('@')[0],
-            email: email,
-          }
-        ]);
-
-      if (profileError) throw profileError;
-
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Main' }]
-      });
+      await signUp(email, password, fullName);
       toast.success('Registration successful!');
     } catch (error) {
       toast.error(error.message || 'Registration failed. Please try again.');

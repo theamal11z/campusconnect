@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../lib/context/AuthContext';
 import {
   View,
   Text,
@@ -20,6 +21,8 @@ const LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const { signIn } = useAuth();
+
   const handleLogin = async () => {
     if (!email || !password) {
       toast.error('Please fill in all fields');
@@ -28,17 +31,7 @@ const LoginScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) throw error;
-
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Main' }]
-      });
+      await signIn(email, password);
       toast.success('Login successful!');
     } catch (error) {
       toast.error(error.message || 'Login failed. Please try again.');
