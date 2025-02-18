@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -8,15 +9,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-
 import { useColleges } from '../lib/hooks/useData';
-
-const ExploreScreen = () => {
-  const { colleges, loading, error } = useColleges();
+import { TagService } from '../lib/services/TagService';
+import { Tag } from '../lib/components/Tag';
 
 const FILTERS = [
   { id: 'all', label: 'All' },
@@ -47,6 +48,7 @@ const CollegeCard = ({ college }) => (
 );
 
 const ExploreScreen = () => {
+  const { colleges, loading, error, refetch } = useColleges();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [tags, setTags] = useState([]);
@@ -157,7 +159,7 @@ const ExploreScreen = () => {
         </View>
       ) : (
         <FlatList
-          data={colleges}
+          data={filteredColleges}
           renderItem={({ item }) => <CollegeCard college={item} />}
           keyExtractor={item => item.id}
           contentContainerStyle={styles.collegesList}
@@ -202,6 +204,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E1E8ED',
   },
+  tagsContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E1E8ED',
+  },
   filterChip: {
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -221,6 +229,21 @@ const styles = StyleSheet.create({
   },
   collegesList: {
     padding: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  errorText: {
+    color: '#E0245E',
+    textAlign: 'center',
   },
   card: {
     backgroundColor: '#fff',
