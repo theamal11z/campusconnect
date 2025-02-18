@@ -31,22 +31,12 @@ const LoginScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: password,
+      await signIn(email, password);
+      toast.success('Login successful!');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Main' }],
       });
-
-      if (error) throw error;
-
-      if (data.user && data.session) {
-        toast.success('Login successful!');
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Main' }],
-        });
-      } else {
-        throw new Error('Login failed - no user data');
-      }
     } catch (error: any) {
       console.error('Login error:', error);
       toast.error(error?.message || 'Login failed. Please try again.');
