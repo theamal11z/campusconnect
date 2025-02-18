@@ -146,6 +146,10 @@ function RootStack() {
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="Verify" component={VerifyScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="PostScreen" component={PostScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       {/* Added Forums Screen here */}
       {/* Assuming these screens exist */}
       {/* <Stack.Screen name="Forums" component={ForumsScreen} /> */}

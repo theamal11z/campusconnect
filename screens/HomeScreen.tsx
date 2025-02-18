@@ -213,7 +213,7 @@ const HomeScreen = ({ navigation }) => {
         navigation={navigation}
         hasNewPosts={hasNewPosts}
         onMenuPress={() => {}}
-        onNotificationsPress={() => {}}
+        onNotificationsPress={() => navigation.navigate('Notifications')}
       />
 
       <FlatList
