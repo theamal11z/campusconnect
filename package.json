@@ -29,6 +29,7 @@
     "react-native-safe-area-context": "latest",
     "react-native-screens": "latest",
     "react-native-svg": "latest",
+    "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "^0.19.13",
     "sonner-native": "latest"
   },
