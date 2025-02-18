@@ -8,6 +8,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~4.0.1",
     "@expo/vector-icons": "^14.0.4",
     "@react-native-async-storage/async-storage": "latest",
     "@react-native-community/slider": "latest",
@@ -21,12 +22,14 @@
     "expo-status-bar": "~2.0.1",
     "lucide-react-native": "latest",
     "react": "18.3.1",
+    "react-dom": "^18.3.1",
     "react-native": "0.76.7",
     "react-native-gesture-handler": "latest",
     "react-native-reanimated": "latest",
     "react-native-safe-area-context": "latest",
     "react-native-screens": "latest",
     "react-native-svg": "latest",
+    "react-native-web": "^0.19.13",
     "sonner-native": "latest"
   },
   "devDependencies": {
