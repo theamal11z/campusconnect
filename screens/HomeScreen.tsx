@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import { usePosts } from '../lib/hooks/usePosts';
 import {
   View,
   Text,
