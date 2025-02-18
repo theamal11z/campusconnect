@@ -31,14 +31,22 @@ const LoginScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      if (!email || !password) {
-        throw new Error('Please fill in all fields');
-      }
-      await signIn(email, password);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password,
+      });
+
+      if (error) throw error;
+
       toast.success('Login successful!');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Main' }],
+      });
     } catch (error: any) {
       console.error('Login error:', error);
       toast.error(error?.message || 'Login failed. Please try again.');
+    } finally {
       setLoading(false);
     }
   };

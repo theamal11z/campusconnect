@@ -53,14 +53,42 @@ const RegisterScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      if (!email || !password || !fullName) {
-        throw new Error('Please fill in all fields');
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password: password,
+        options: {
+          data: {
+            full_name: fullName.trim(),
+          },
+        },
+      });
+
+      if (signUpError) throw signUpError;
+
+      if (authData?.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([
+            {
+              id: authData.user.id,
+              full_name: fullName.trim(),
+              username: email.split('@')[0],
+              email: email.trim(),
+            },
+          ]);
+
+        if (profileError) throw profileError;
       }
-      await signUp(email, password, fullName);
+
       toast.success('Registration successful!');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Main' }],
+      });
     } catch (error: any) {
       console.error('Registration error:', error);
       toast.error(error?.message || 'Registration failed. Please try again.');
+    } finally {
       setLoading(false);
     }
   };
