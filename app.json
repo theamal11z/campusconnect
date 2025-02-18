@@ -1,3 +1,4 @@
+
 {
   "expo": {
     "name": "a0-project",
@@ -22,8 +23,13 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
-    "description": "Quickly generate React Native components with AI"
+    "extra": {
+      "eas": {}
+    },
+    "description": "Quickly generate React Native components with AI",
+    "hostUri": "0.0.0.0:8081"
   }
 }
