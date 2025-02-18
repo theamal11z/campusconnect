@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   useEffect(() => {
     // Get initial session
@@ -64,24 +64,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: fullName } }
+        options: { 
+          data: { full_name: fullName },
+        }
       });
+      
       if (signUpError) throw signUpError;
+      if (!data.user) throw new Error('No user data returned');
 
       const { error: profileError } = await supabase
         .from('profiles')
         .insert([{
+          id: data.user.id,
           full_name: fullName,
           username: email.split('@')[0],
           email
         }]);
+        
       if (profileError) throw profileError;
 
-      navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+      // Set user and session after successful signup
+      setUser(data.user);
+      setSession(data.session);
+      
+      navigation.reset({ 
+        index: 0, 
+        routes: [{ name: 'Main' }] 
+      });
     } catch (error) {
+      console.error('SignUp error:', error);
       throw error;
     }
   };

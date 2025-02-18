@@ -140,13 +140,9 @@ function RootStack() {
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen
-          name="Main"
-          component={({ navigation }) => (
-            <ProtectedRoute>
-              <MainTabs navigation={navigation} />
-            </ProtectedRoute>
-          )}
-        />
+        name="Main"
+        component={MainTabs}
+      />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="Verify" component={VerifyScreen} />
