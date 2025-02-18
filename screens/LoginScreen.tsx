@@ -31,13 +31,7 @@ const LoginScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: password,
-      });
-
-      if (error) throw error;
-
+      await signIn(email, password);
       toast.success('Login successful!');
       navigation.reset({
         index: 0,

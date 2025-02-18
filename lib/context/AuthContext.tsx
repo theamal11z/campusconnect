@@ -49,12 +49,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data: { session, user }, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password
+      });
+
       if (error) throw error;
-      if (!data.user) throw new Error('No user data returned');
-      setUser(data.user);
-      setSession(data.session);
-      navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+
+      if (session && user) {
+        setUser(user);
+        setSession(session);
+        return { success: true };
+      } else {
+        throw new Error('Authentication failed');
+      }
     } catch (error) {
       console.error('SignIn error:', error);
       throw error;
